@@ -1,0 +1,11 @@
+# 通用设置。附魔定义在 enchantments.yml；/ew editor 打开图形编辑器。
+
+# EnchantmentWorkshop 1.0.0 — UTF-8，修改前请阅读 README.md。
+# 新增/删除附魔、更改名字/等级/适用物品/获取途径后需要完整重启服务器。
+# 只修改 effects、description 或 settings 后可使用 /ew reload。
+# 已使用的附魔请保留 ID；停用请设 enabled: false，避免存档丢失附魔。
+config-version: 1
+settings:
+  allow-pvp-effects: true
+  minimum-attack-cooldown: 0.85
+  disabled-worlds: []

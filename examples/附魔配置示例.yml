@@ -1,0 +1,208 @@
+# 附魔编辑区：可手动编辑，也可使用 /ew editor。
+# 新增 ID、名字、等级和获取途径需要重启；效果数值可重载。
+# 不要删除已使用的 ID；停用请设置 enabled: false。
+
+enchantments:
+  lifesteal:
+    name: 吸血
+    description: 近战命中时有概率恢复实际伤害的一部分生命；每级提高吸血比例。
+    enabled: true
+    max-level: 3
+    weight: 3
+    anvil-cost: 4
+    item-tag: minecraft:swords
+    active-slots:
+    - mainhand
+    min-cost: 15
+    cost-per-level: 10
+    cost-span: 25
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: LIFESTEAL
+      value: 0.08
+      per-level: 0.04
+      chance: 0.35
+      cooldown-ticks: 20
+
+  frostbite:
+    name: 冰霜
+    description: 近战命中时有概率使目标减速 3 秒；每级提高触发概率。
+    max-level: 3
+    weight: 5
+    anvil-cost: 4
+    item-tag: minecraft:swords
+    active-slots:
+    - mainhand
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: POTION_ON_HIT
+      potion: minecraft:slowness
+      duration-ticks: 60
+      amplifier: 0
+      chance: 0.2
+      chance-per-level: 0.1
+      cooldown-ticks: 40
+
+  critical:
+    name: 致命一击
+    description: 近战命中时有 20% 概率造成额外伤害，增幅随等级提高。
+    max-level: 3
+    weight: 2
+    anvil-cost: 6
+    item-tag: minecraft:swords
+    active-slots:
+    - mainhand
+    min-cost: 15
+    cost-per-level: 10
+    cost-span: 25
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: BONUS_DAMAGE
+      value: 0.35
+      per-level: 0.15
+      chance: 0.2
+      cooldown-ticks: 20
+
+  smelting:
+    name: 自动熔炼
+    description: 将挖出的粗铁、粗金、粗铜及远古残骸熔炼；保留时运数量，精准采集优先。
+    max-level: 1
+    weight: 3
+    anvil-cost: 4
+    item-tag: minecraft:pickaxes
+    active-slots:
+    - mainhand
+    conflicts:
+    - minecraft:silk_touch
+    min-cost: 20
+    cost-per-level: 0
+    cost-span: 30
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: AUTO_SMELT
+
+  telekinesis:
+    name: 磁力
+    description: 采矿掉落直接收入背包，满背包时剩余物品正常掉落。
+    max-level: 1
+    weight: 5
+    anvil-cost: 3
+    item-tag: minecraft:enchantable/mining
+    active-slots:
+    - mainhand
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: TELEKINESIS
+
+  wisdom:
+    name: 博学
+    description: 用主手工具采矿或击杀生物时，每级增加 20% 原本应掉落的经验。
+    max-level: 3
+    weight: 4
+    anvil-cost: 4
+    item-tag: minecraft:enchantable/durability
+    active-slots:
+    - mainhand
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: EXPERIENCE_BOOST
+      value: 0.2
+      per-level: 0.2
+
+  night_vision:
+    name: 夜视
+    description: 佩戴头盔时持续获得夜视；卸下后最长约 12 秒自然消退。
+    max-level: 1
+    weight: 3
+    anvil-cost: 4
+    item-tag: minecraft:enchantable/head_armor
+    active-slots:
+    - head
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: PASSIVE_POTION
+      potion: minecraft:night_vision
+      amplifier: 0
+      duration-ticks: 240
+
+  haste:
+    name: 急迫
+    description: 主手持有工具时获得急迫，等级随附魔等级提高。
+    max-level: 2
+    weight: 2
+    anvil-cost: 6
+    item-tag: minecraft:enchantable/mining
+    active-slots:
+    - mainhand
+    min-cost: 20
+    cost-per-level: 10
+    cost-span: 25
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: PASSIVE_POTION
+      potion: minecraft:haste
+      amplifier: 0
+      amplifier-per-level: 1
+      duration-ticks: 60
+
+  swiftness:
+    name: 疾行
+    description: 穿着靴子时获得速度，等级随附魔等级提高。
+    max-level: 2
+    weight: 3
+    anvil-cost: 4
+    item-tag: minecraft:enchantable/foot_armor
+    active-slots:
+    - feet
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: PASSIVE_POTION
+      potion: minecraft:speed
+      amplifier: 0
+      amplifier-per-level: 1
+      duration-ticks: 60
+
+  guardian:
+    name: 守护
+    description: 穿着胸甲时，每级降低 4% 近战及弹射物伤害。
+    max-level: 3
+    weight: 3
+    anvil-cost: 5
+    item-tag: minecraft:enchantable/chest_armor
+    active-slots:
+    - chest
+    acquisition:
+      enchanting-table: true
+      villager-trade: true
+      random-loot: true
+    effects:
+    - type: DAMAGE_REDUCTION
+      value: 0.04
+      per-level: 0.04

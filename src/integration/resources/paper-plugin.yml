@@ -1,0 +1,10 @@
+name: EnchantmentWorkshopProbe
+version: '1.0.0'
+main: cn.mc.enchantmentworkshop.probe.IntegrationProbe
+api-version: '26.3'
+dependencies:
+  server:
+    EnchantmentWorkshop:
+      load: BEFORE
+      required: true
+      join-classpath: true

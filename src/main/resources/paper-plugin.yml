@@ -1,0 +1,14 @@
+name: EnchantmentWorkshop
+version: '${version}'
+main: cn.mc.enchantmentworkshop.EnchantmentWorkshopPlugin
+bootstrapper: cn.mc.enchantmentworkshop.EnchantmentWorkshopBootstrap
+api-version: '26.3'
+description: Enchantment Workshop / 附魔工坊 — 可配置的原生附魔与图形化编辑器
+authors: [MC]
+permissions:
+  enchantmentworkshop.use:
+    description: 查看附魔列表和说明
+    default: true
+  enchantmentworkshop.admin:
+    description: 获取附魔书、管理附魔和重载效果配置
+    default: op

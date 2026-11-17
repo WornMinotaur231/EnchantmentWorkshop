@@ -1,0 +1,6 @@
+package cn.mc.enchantmentworkshop;
+
+public enum EffectType {
+    LIFESTEAL, BONUS_DAMAGE, POTION_ON_HIT, AUTO_SMELT, TELEKINESIS,
+    EXPERIENCE_BOOST, PASSIVE_POTION, DAMAGE_REDUCTION, PROGRAM
+}

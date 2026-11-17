@@ -1,0 +1,40 @@
+.gradle/
+build/
+verification/
+.idea/
+*.iml
+
+# Local runtime output and reports (may include absolute paths or player data)
+*.log
+logs/
+crash-reports/
+plugins/
+world/
+world_nether/
+world_the_end/
+
+# Local machine configuration and secrets
+.env
+.env.*
+!.env.example
+local.properties
+gradle.properties
+.vscode/
+*.jks
+*.keystore
+*.pem
+*.key
+*.bak
+*.previous
+*.disabled
+
+# Generated distributions; retain the official Gradle Wrapper
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.zip
+*.sha256
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
