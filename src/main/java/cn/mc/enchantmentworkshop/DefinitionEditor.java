@@ -166,10 +166,7 @@ public final class DefinitionEditor {
         output.set("enchantments", draft.yaml().getConfigurationSection("enchantments"));
         Files.copy(definitions, definitions.resolveSibling("enchantments.yml.bak"), StandardCopyOption.REPLACE_EXISTING);
         ConfigLoader.atomicWrite(definitions, output.saveToString());
-        if (plugin.canReload(candidate)) {
-            plugin.applyRuntime(candidate);
-            return "已保存并生效。";
-        }
-        return "已保存，完整重启服务器后生效。原生附魔的新增、删除和注册属性变更不能热重载。";
+        plugin.reloadEffects();
+        return plugin.reloadStatus();
     }
 }

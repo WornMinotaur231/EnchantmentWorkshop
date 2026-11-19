@@ -79,7 +79,7 @@ public final class EnchantCommand implements BasicCommand {
                 case "reload" -> {
                     require(args.length == 1, "用法：/ew reload");
                     plugin.reloadEffects();
-                    message(sender, "效果及通用配置已重新加载。");
+                    message(sender, plugin.reloadStatus());
                 }
                 default -> help(sender);
             }

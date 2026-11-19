@@ -194,9 +194,10 @@ public final class IntegrationProbe extends JavaPlugin implements Listener {
         check("admin_command_apply", player.getInventory().getItemInMainHand().getEnchantmentLevel(enchants.enchantment("lifesteal")) == 1);
 
         Settings before = plugin.settings();
-        Files.writeString(config, original.replace("name: 吸血", "name: 改名"));
-        expectRejected("reload_registry_rejected", plugin::reloadEffects);
-        check("reload_atomic", plugin.settings() == before);
+        Files.writeString(config, original.replace("name: 吸血", "name: 改名").replace("value: 0.08", "value: 0.11"));
+        plugin.reloadEffects();
+        check("reload_keeps_registered_name", plugin.settings().enchantments().get("lifesteal").name().equals(before.enchantments().get("lifesteal").name())
+                && plugin.settings().enchantments().get("lifesteal").effects().getFirst().value() == .11);
         Files.writeString(config, original.replace("value: 0.08", "value: 0.10"));
         plugin.reloadEffects();
         check("reload_runtime_accepted", plugin.settings().enchantments().get("lifesteal").effects().getFirst().value() == .10);
@@ -431,8 +432,8 @@ public final class IntegrationProbe extends JavaPlugin implements Listener {
         check("delete_command_removes_definition", !editor.ids(editor.read()).contains("guardian"));
         check("delete_preserves_backup", Files.readString(config.resolveSibling("enchantments.yml.bak")).equals(backup));
         check("delete_removes_only_own_reference", editor.settings(editor.read()).enchantments().get("frostbite").conflicts().equals(List.of("minecraft:sharpness")));
-        check("delete_active_definition_waits_for_restart", plugin.settings().enchantments().containsKey("guardian"));
-        expectRejected("delete_rejects_hot_reload", plugin::reloadEffects);
+        check("delete_effect_stops_immediately", !plugin.settings().enchantments().containsKey("guardian"));
+        plugin.reloadEffects();
         String deleted = Files.readString(config);
         command.execute(source, new String[]{"delete", "guardian", "confirm"});
         check("delete_confirmation_single_use", Files.readString(config).equals(deleted));
@@ -489,8 +490,12 @@ public final class IntegrationProbe extends JavaPlugin implements Listener {
     private void optionChecks() throws Exception {
         var editor = plugin.editor(); var draft = editor.read(); String before = Files.readString(config);
         var edit = EditorMenu.class.getDeclaredMethod("edit", Player.class, DefinitionEditor.Draft.class, String.class); edit.setAccessible(true);
+        edit.invoke(plugin.menus(), player, draft, "lifesteal"); pressMenu(DefinitionEditor.FIELDS.indexOf("item-tag"));
+        pressMenu(51);
+        var first = player.getOpenInventory().getTopInventory().getItem(0);
+        check("item_picker_uses_actual_item", first != null && first.getType() != Material.PAPER && first.getType() != Material.BARRIER);
         edit.invoke(plugin.menus(), player, draft, "lifesteal"); pressMenu(DefinitionEditor.FIELDS.indexOf("active-slots"));
-        check("slots_menu_shows_selected_mainhand", player.getOpenInventory().getTopInventory().getItem(0).getType() == Material.LIME_DYE);
+        check("slots_menu_shows_selected_mainhand", player.getOpenInventory().getTopInventory().getItem(0).getType() == Material.DIAMOND_SWORD);
         pressMenu(1); check("slots_menu_multiselect", draft.yaml().getStringList("enchantments.lifesteal.active-slots").equals(List.of("mainhand", "offhand")));
         pressMenu(0); expectRejected("slots_menu_keeps_one_slot", () -> pressMenu(1));
         pressMenu(48); pressMenu(49);

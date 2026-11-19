@@ -52,6 +52,10 @@ public final class ConfigLoader {
             atomicWrite(file, main.saveToString());
         }
         YamlConfiguration separate = yaml(Files.readString(definitions, StandardCharsets.UTF_8));
+        return combine(main, separate);
+    }
+
+    static YamlConfiguration combine(YamlConfiguration main, YamlConfiguration separate) {
         checkKeys(separate, Set.of("enchantments"));
         main.set("enchantments", section(separate, "enchantments"));
         return main;

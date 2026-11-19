@@ -108,7 +108,7 @@ public final class EditorMenu implements Listener {
         int slot = 0;
         for (String field : DefinitionEditor.FIELDS) {
             Object current = section.get(field);
-            menu.button(slot++, Material.PAPER, LABELS.get(field), List.of("当前：" + EditorText.text(current),
+            menu.button(slot++, icon(field), LABELS.get(field), List.of("当前：" + EditorText.text(current),
                     "点击修改 · 需要保存", field), () -> {
                 if (field.equals("item-tag")) {
                     targets(player, draft, id);
@@ -184,7 +184,7 @@ public final class EditorMenu implements Listener {
         Page menu = new Page(player, LABELS.get(field) + " · 多选 · " + (page + 1));
         for (int i = page * 45; i < Math.min(keys.size(), (page + 1) * 45); i++) {
             String key = keys.get(i); boolean checked = selected.contains(key);
-            menu.button(i % 45, checked ? Material.LIME_DYE : Material.GRAY_DYE,
+            menu.button(i % 45, slots ? icon(key) : Material.ENCHANTED_BOOK,
                     Component.text(checked ? "☑ " : "☐ ").append(options.get(key)), List.of("代码：" + key, "点击勾选 / 取消勾选", "仅修改草稿，返回后保存才生效"), () -> {
                 if (checked && slots && selected.size() == 1) throw new IllegalArgumentException("至少选择一个生效槽位。");
                 if (checked) selected.remove(key); else selected.add(key);
@@ -208,7 +208,7 @@ public final class EditorMenu implements Listener {
                 {"可附耐久的主手物品", "enchantable/durability", "mainhand"}};
         for (int i = 0; i < choices.length; i++) {
             String[] choice = choices[i];
-            menu.button(i, Material.DIAMOND, choice[0], List.of("同时设置对应的生效槽位"), () -> {
+            menu.button(i, tagIcon("minecraft:" + choice[1]), choice[0], List.of("同时设置对应的生效槽位"), () -> {
                 editor().set(draft, id, "item-tag", "minecraft:" + choice[1]);
                 editor().set(draft, id, "active-slots", choice[2]); edit(player, draft, id);
             });
@@ -247,7 +247,7 @@ public final class EditorMenu implements Listener {
             fields.addAll(List.of("chance", "chance-per-level", "cooldown-ticks"));
         int slot = 0;
         for (String field : fields) {
-            menu.button(slot++, Material.PAPER, LABELS.get(field), List.of("当前：" + EditorText.text(data.get(field)),
+            menu.button(slot++, icon(field), LABELS.get(field), List.of("当前：" + EditorText.text(data.get(field)),
                     "比例 0.2 = 20% · 等级从 0 开始", "点击输入；default 恢复默认"), () ->
                     ask(player, "输入「" + LABELS.get(field) + "」的新值（default 恢复默认）。", value -> {
                         editor().setEffect(draft, id, index, field, value); effect(player, draft, id, index);
@@ -307,9 +307,53 @@ public final class EditorMenu implements Listener {
             case PROGRAM -> "可编程规则（触发 → 条件 → 动作）";
         };
     }
+    private static Material tagIcon(String value) {
+        var tag = org.bukkit.Bukkit.getTag(org.bukkit.Tag.REGISTRY_ITEMS, org.bukkit.NamespacedKey.fromString(value), Material.class);
+        if (tag == null) return Material.CHEST;
+        return tag.getValues().stream().filter(m -> m.isItem() && !m.isAir()).findFirst().orElse(Material.CHEST);
+    }
+
+    private static Material choiceIcon(String title, String value) {
+        if (title.equals("全部物品")) {
+            Material item = Material.matchMaterial(value);
+            return item != null && item.isItem() && !item.isAir() ? item : Material.BARRIER;
+        }
+        if (title.equals("服务器物品类别")) return tagIcon(value);
+        if (title.contains("药水")) return Material.POTION;
+        return icon(value);
+    }
+
+    private static Material icon(String field) {
+        return switch (field) {
+            case "head" -> Material.DIAMOND_HELMET;
+            case "chest", "armor", "any", "active-slots" -> Material.DIAMOND_CHESTPLATE;
+            case "legs" -> Material.DIAMOND_LEGGINGS;
+            case "feet" -> Material.DIAMOND_BOOTS;
+            case "mainhand", "hand", "ATTACK" -> Material.DIAMOND_SWORD;
+            case "offhand", "HURT" -> Material.SHIELD;
+            case "name" -> Material.NAME_TAG;
+            case "description" -> Material.WRITABLE_BOOK;
+            case "conflicts" -> Material.ENCHANTED_BOOK;
+            case "enabled" -> Material.LEVER;
+            case "item-tag", "acquisition.random-loot" -> Material.CHEST;
+            case "acquisition.enchanting-table" -> Material.ENCHANTING_TABLE;
+            case "acquisition.villager-trade" -> Material.EMERALD;
+            case "anvil-cost", "flight-durability-cost" -> Material.ANVIL;
+            case "potion", "POTION" -> Material.POTION;
+            case "EXPLOSION" -> Material.TNT;
+            case "FLIGHT" -> Material.ELYTRA;
+            case "HEAL" -> Material.GOLDEN_APPLE;
+            case "IGNITE" -> Material.FLINT_AND_STEEL;
+            case "LAUNCH" -> Material.FIREWORK_ROCKET;
+            case "cooldown-ticks", "duration-ticks", "time", "PERIODIC" -> Material.CLOCK;
+            case "world", "biome", "height", "box" -> Material.COMPASS;
+            default -> Material.COMPARATOR;
+        };
+    }
+
     private void choose(Player p,String title,List<String> options,int requested,Input selected,Action back){
         int page=Math.clamp(requested,0,Math.max(0,(options.size()-1)/45)); Page m=new Page(p,title+" · "+(page+1));
-        for(int i=page*45;i<Math.min(options.size(),page*45+45);i++){String value=options.get(i);m.button(i%45,Material.PAPER,title.equals("世界")?value:EditorText.text(value),List.of("代码："+value,"点击选择"),()->selected.accept(value));}
+        for(int i=page*45;i<Math.min(options.size(),page*45+45);i++){String value=options.get(i);m.button(i%45,choiceIcon(title, value),title.equals("世界")?value:EditorText.text(value),List.of("代码："+value,"点击选择"),()->selected.accept(value));}
         m.button(45,Material.ARROW,"上一页",List.of(),()->choose(p,title,options,page-1,selected,back));
         m.button(49,Material.ARROW,"返回",List.of(),back);
         m.button(53,Material.ARROW,"下一页",List.of(),()->choose(p,title,options,page+1,selected,back));p.openInventory(m.inventory);
@@ -341,7 +385,7 @@ public final class EditorMenu implements Listener {
         boolean flight="FLIGHT".equals(data.get("action"));
         int slot=18;
         List<String> fields=flight?List.of("chance","chance-per-level","cooldown-ticks"):List.of("value","per-level","chance","chance-per-level","cooldown-ticks","duration-ticks","amplifier","amplifier-per-level");
-        for(String key:fields)m.button(slot++,Material.PAPER,LABELS.get(key),List.of("当前："+EditorText.text(data.get(key))),()->ask(p,"输入 "+LABELS.get(key),v->{ruleSet(d,id,index,key,DefinitionEditor.value(key,v));program(p,d,id,index);},()->program(p,d,id,index)));
+        for(String key:fields)m.button(slot++,icon(key),LABELS.get(key),List.of("当前："+EditorText.text(data.get(key))),()->ask(p,"输入 "+LABELS.get(key),v->{ruleSet(d,id,index,key,DefinitionEditor.value(key,v));program(p,d,id,index);},()->program(p,d,id,index)));
         if(flight) {
             String key="flight-durability-cost";Object current=data.containsKey(key)?data.get(key):0;
             m.button(26,Material.ANVIL,LABELS.get(key),List.of("当前："+current,"每次从非飞行切换为飞行时消耗一次","飞行途中、落地和重复触发规则不消耗","整数 0～1000；遵循原版耐久与不可破坏属性"),()->ask(p,"输入 "+LABELS.get(key),v->{

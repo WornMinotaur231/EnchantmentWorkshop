@@ -29,7 +29,9 @@ public final class EnchantService {
 
     public EnchantDefinition definition(String id) {
         enchantment(id);
-        return plugin.settings().enchantments().get(id);
+        var definition = plugin.settings().enchantments().get(id);
+        if (definition == null) throw new IllegalArgumentException("附魔已停用或删除：" + id);
+        return definition;
     }
 
     public int level(ItemStack item, EnchantDefinition def) {
